@@ -1,0 +1,111 @@
+#!/bin/sh
+#
+# ispCP ω (OMEGA) a Virtual Hosting Control Panel
+# Copyright (C) 2006-2010 by isp Control Panel - http://ispcp.net
+#
+# Version: $Id: ispcp_daemon 2505 2010-01-06 20:30:53Z nuxwin $
+#
+# The contents of this file are subject to the Mozilla Public License
+# Version 1.1 (the "License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+# http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS"
+# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+# License for the specific language governing rights and limitations
+# under the License.
+#
+# The Original Code is "ispCP ω (OMEGA) a Virtual Hosting Control Panel".
+#
+# The Initial Developer of the Original Code is ispCP Team.
+# Portions created by Initial Developer are Copyright (C) 2006-2010 by
+# isp Control Panel. All Rights Reserved.
+#
+# The ispCP ω Home Page is:
+#
+#    http://isp-control.net
+#
+
+# description: Starts and stops the ISPCP daemon
+#
+# config:  /etc/ispcp/ispcp.conf
+# pidfile: /var/run/ispcp/ispcp_daemon.pid
+#
+
+daemon_name=ispcp_daemon
+
+. /etc/rc.conf
+. /etc/rc.d/functions
+. /etc/conf.d/$daemon_name.conf
+
+get_pid() {
+    pidof -o %PPID $daemon_name
+}
+
+# Check that ispcp.conf exists.
+[ -f /etc/ispcp/ispcp.conf ] || exit 0
+
+# Check that we can write to it... so non-root users stop here
+[ -w /etc/ispcp/ispcp.conf ] || exit 0
+
+# Allow status as non-root.
+if [ "$1" = status ]; then
+       ck_status $daemon_name
+       exit $?
+fi
+
+case "$1" in
+    start)
+        stat_busy "Starting $daemon_name daemon"
+        PID=$(get_pid)
+        if [ -z "$PID" ]; then
+            [ -f /var/run/ispcp/$daemon_name.pid ] && rm -f /var/run/ispcp/$daemon_name.pid
+            # RUN
+            $daemon_name
+            #
+            if [ $? -gt 0 ]; then
+                stat_fail
+                exit 1
+            else
+                echo $(get_pid) > /var/run/ispcp/$daemon_name.pid
+                add_daemon $daemon_name
+                stat_done
+            fi
+        else
+            stat_fail
+            exit 1
+        fi
+    ;;
+
+    stop)
+        stat_busy "Stopping $daemon_name daemon"
+        PID=$(get_pid)
+        # KILL
+        [ ! -z "$PID" ] && kill $PID &> /dev/null
+        #
+        if [ $? -gt 0 ]; then
+            stat_fail
+            exit 1
+        else
+            rm -f /var/run/ispcp/$daemon_name.pid &> /dev/null
+            rm_daemon $daemon_name
+            stat_done
+        fi
+    ;;
+
+    restart)
+        $0 stop
+        sleep 3
+        $0 start
+    ;;
+
+    status)
+        stat_busy "Checking $daemon_name status"
+        ck_status $daemon_name
+    ;;
+
+    *)
+        echo "usage: $0 {start|stop|restart|status}"
+esac
+
+exit 0

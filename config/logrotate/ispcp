@@ -27,6 +27,29 @@
 #    http://isp-control.net
 #
 
+# Rotation for apache2, launching general statistics if awstats is installed
+#
+/var/log/httpd/*.log {
+  weekly
+  rotate 52
+  missingok
+  compress
+  delaycompress
+  notifempty
+  create 640 root adm
+  sharedscripts
+  prerotate
+    if [ `cat /etc/ispcp/ispcp.conf | grep -c 'AWSTATS_ACTIVE *= *yes'` = 1 ]; then
+      perl /srv/http/ispcp/engine/awstats/awstats_updateall.pl now -awstatsprog=/usr/lib/cgi-bin/awstats.pl >/dev/null 2>&1
+    fi
+  endscript
+  postrotate
+    if [ -f /var/run/httpd/httpd.pid ]; then
+      /etc/rc.d/httpd restart > /dev/null
+    fi
+  endscript
+}
+
 # Rotation for user logs for ispCP traffic count
 #
 /var/log/httpd/users/*.log {
@@ -56,29 +79,6 @@
   delaycompress
   notifempty
   create 640 root adm
-}
-
-# Rotation for apache2, launching general statistics if awstats is installed
-#
-/var/log/httpd/*.log {
-  weekly
-  rotate 52
-  missingok
-  compress
-  delaycompress
-  notifempty
-  create 640 root adm
-  sharedscripts
-  prerotate
-    if [ `cat /etc/ispcp/ispcp.conf | grep -c 'AWSTATS_ACTIVE *= *yes'` = 1 ]; then
-      perl /srv/http/ispcp/engine/awstats/awstats_updateall.pl now -awstatsprog=/usr/lib/cgi-bin/awstats.pl >/dev/null 2>&1
-    fi
-  endscript
-  postrotate
-    if [ -f /var/run/httpd/httpd.pid ]; then
-      /etc/rc.d/httpd restart > /dev/null
-    fi
-  endscript
 }
 
 # Rotation for ispcp-apache-logger logfiles

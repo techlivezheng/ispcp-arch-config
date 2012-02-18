@@ -42,17 +42,17 @@ get_pid() {
     pidof -o %PPID $daemon_name
 }
 
-# Check that ispcp.conf exists.
-[ -f /etc/ispcp/ispcp.conf ] || exit 0
-
-# Check that we can write to it... so non-root users stop here
-[ -w /etc/ispcp/ispcp.conf ] || exit 0
-
 # Allow status as non-root.
 if [ "$1" = status ]; then
        ck_status $daemon_name
        exit $?
 fi
+
+# Check that ispcp.conf exists.
+[ -f /etc/ispcp/ispcp.conf ] || exit 0
+
+# Check that we can write to it... so non-root users stop here
+[ -w /etc/ispcp/ispcp.conf ] || exit 0
 
 case "$1" in
     start)

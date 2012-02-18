@@ -44,6 +44,8 @@ daemon_name=ispcp_network
 . /etc/rc.d/functions
 . /etc/conf.d/$daemon_name.conf
 
+[[ -d /var/run/ispcp ]] || install -d -o root -g root /var/run/ispcp
+
 add_rules() {
     iptables -N ISPCP_INPUT 2>> "${LOG_DIR}/${NAME}.err.log"
     iptables -N ISPCP_OUTPUT 2>> "${LOG_DIR}/${NAME}.err.log"

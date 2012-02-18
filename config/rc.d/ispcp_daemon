@@ -54,6 +54,8 @@ fi
 # Check that we can write to it... so non-root users stop here
 [ -w /etc/ispcp/ispcp.conf ] || exit 0
 
+[[ -d /var/run/ispcp ]] || install -d -o root -g root /var/run/ispcp
+
 case "$1" in
     start)
         stat_busy "Starting $daemon_name daemon"

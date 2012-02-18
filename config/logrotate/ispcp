@@ -107,6 +107,8 @@
       /usr/bin/killall -HUP syslogd
     elif [ -e /var/run/rsyslogd.pid ]; then
       /usr/bin/killall -HUP rsyslogd
+    elif [ -e /var/run/syslog-ng.pid ]; then
+      /usr/bin/killall -HUP syslog-ng
     fi
   endscript
 }
@@ -127,6 +129,8 @@
       /usr/bin/killall -HUP syslogd
     elif [ -e /var/run/rsyslogd.pid ]; then
       /usr/bin/killall -HUP rsyslogd
+    elif [ -e /var/run/syslog-ng.pid ]; then
+      /usr/bin/killall -HUP syslog-ng
     fi
   endscript
 }

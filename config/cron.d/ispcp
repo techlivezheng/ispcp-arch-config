@@ -2,38 +2,38 @@
 # delayed tasks START.
 
 # Quota
-@daily ID=ispcp-daily umask 027; {QUOTA_ROOT_DIR}/ispcp-dsk-quota &>{LOG_DIR}/ispcp-dsk-quota.log
+@daily root umask 027; {QUOTA_ROOT_DIR}/ispcp-dsk-quota &>{LOG_DIR}/ispcp-dsk-quota.log
 
 # customer logs
-@daily ID=ispcp-daily umask 027; {TOOLS_ROOT_DIR}/ispcp-httpd-logs-mngr &>{LOG_DIR}/ispcp-httpd-logs-mngr.log
+@daily root umask 027; {TOOLS_ROOT_DIR}/ispcp-httpd-logs-mngr &>{LOG_DIR}/ispcp-httpd-logs-mngr.log
 
 # Backup for all the customers' data depending of the domain properties
-@daily ID=ispcp-daily umask 027; {BACKUP_ROOT_DIR}/ispcp-backup-all yes &>{LOG_DIR}/ispcp-backup-all-mngr.log
+@daily root umask 027; {BACKUP_ROOT_DIR}/ispcp-backup-all yes &>{LOG_DIR}/ispcp-backup-all-mngr.log
 
 # Backup for ispCP database and all /etc/ispcp/* configuration files
-@daily ID=ispcp-daily umask 027; {BACKUP_ROOT_DIR}/ispcp-backup-ispcp noreport &>{LOG_DIR}/ispcp-backup-ispcp-mngr.log
+@daily root umask 027; {BACKUP_ROOT_DIR}/ispcp-backup-ispcp noreport &>{LOG_DIR}/ispcp-backup-ispcp-mngr.log
 
 # Remove config backups older than seven days
-@daily ID=ispcp-daily find {CONF_DIR}/*/backup/* -maxdepth 0 -type f -mtime +7 -print | egrep '.*\.[0-9]+$' | xargs -r /bin/rm
+@daily root find {CONF_DIR}/*/backup/* -maxdepth 0 -type f -mtime +7 -print | egrep '.*\.[0-9]+$' | xargs -r /bin/rm
 
 # Remove Daemon Logs older than 14 days (except .gz files)
-@daily ID=ispcp-daily find {LOG_DIR}/* -maxdepth 1 -type f -mtime +14 -print | egrep '.*\.gz$' | xargs -r /bin/rm
+@daily root find {LOG_DIR}/* -maxdepth 1 -type f -mtime +14 -print | egrep '.*\.gz$' | xargs -r /bin/rm
 
 # Delete old apache logfiles weekly
-@weekly ID=ispcp-weekly {TOOLS_ROOT_DIR}/ispcp-del-logs.sh >/dev/null 2>&1
+@weekly root {TOOLS_ROOT_DIR}/ispcp-del-logs.sh >/dev/null 2>&1
 
 # Traffic
-0,30	*	*	*	*  umask 027; {TRAFF_ROOT_DIR}/ispcp-srv-traff &>{LOG_DIR}/ispcp-srv-traff.log
-0,30	*	*	*	*  umask 027; {TRAFF_ROOT_DIR}/ispcp-vrl-traff &>{LOG_DIR}/ispcp-vrl-traff.log
+0,30	*	*	*	*	root	umask 027; {TRAFF_ROOT_DIR}/ispcp-srv-traff &>{LOG_DIR}/ispcp-srv-traff.log
+0,30	*	*	*	*	root	umask 027; {TRAFF_ROOT_DIR}/ispcp-vrl-traff &>{LOG_DIR}/ispcp-vrl-traff.log
 
 # AWStats
-{AW-ENABLED}15	*/6	*	*	*	{AWSTATS_ROOT_DIR}/awstats_updateall.pl now -awstatsprog={AWSTATS_ENGINE_DIR}/awstats.pl >/dev/null 2>&1
+{AW-ENABLED}15	*/6	*	*	*	root	{AWSTATS_ROOT_DIR}/awstats_updateall.pl now -awstatsprog={AWSTATS_ENGINE_DIR}/awstats.pl >/dev/null 2>&1
 
 # Rootkit Hunter
-{RK-ENABLED}0 	*/12	*	*	*	{RKHUNTER} --cronjob --createlogfile {RKHUNTER_LOG} --display-logfile 1>{RKHUNTER_LOG} 2>/dev/null
+{RK-ENABLED}0 	*/12	*	*	*	root	{RKHUNTER} --cronjob --createlogfile {RKHUNTER_LOG} --display-logfile 1>{RKHUNTER_LOG} 2>/dev/null
 
 # Chkrootkit
-{CR-ENABLED}0 	*/12	*	*	*	{CHKROOTKIT} &> {CHKROOTKIT_LOG}
+{CR-ENABLED}0 	*/12	*	*	*	root	{CHKROOTKIT} &> {CHKROOTKIT_LOG}
 
 # Look for and purge old sessions every 30 minutes
 0,30	*	*	*	*	root	{TOOLS_ROOT_DIR}/ispcp-del-phptemp.sh >/dev/null 2>&1

@@ -78,9 +78,9 @@ ispcp-arpl unix  -      n       n       -       -       pipe
   flags=O user=vmail argv=/srv/http/ispcp/engine/messenger/ispcp-arpl-msgr
 
 # TLS - Activate, if TLS is avaiable/used
-smtps     inet  n       -       n       -       -       smtpd
-   -o smtpd_tls_wrappermode=yes
-   -o smtpd_sasl_auth_enable=yes
+#smtps     inet  n       -       n       -       -       smtpd
+#   -o smtpd_tls_wrappermode=yes
+#   -o smtpd_sasl_auth_enable=yes
 #   -o smtpd_client_restrictions=permit_sasl_authenticated,reject
 #
 # ====================================================================

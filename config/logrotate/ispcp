@@ -34,8 +34,8 @@
   rotate 2
   size 10M
   missingok
-  compress
-  delaycompress
+  #compress
+  #delaycompress
   notifempty
   create 640 root adm
 }
@@ -46,8 +46,8 @@
   weekly
   rotate 52
   missingok
-  compress
-  delaycompress
+  #compress
+  #delaycompress
   notifempty
   create 640 root adm
   sharedscripts
@@ -69,8 +69,8 @@
   weekly
   missingok
   rotate 52
-  compress
-  delaycompress
+  #compress
+  #delaycompress
   notifempty
   create 640 root adm
   sharedscripts
@@ -88,8 +88,8 @@
   size 5M
   missingok
   rotate 5
-  compress
-  delaycompress
+  #compress
+  #delaycompress
   notifempty
   create 640 root adm
 }
@@ -100,8 +100,8 @@
   daily
   rotate 7
   missingok
-  compress
-  delaycompress
+  #compress
+  #delaycompress
   postrotate
     if [ -e /var/run/syslogd.pid ]; then
       /usr/bin/killall -HUP syslogd
@@ -119,8 +119,8 @@
   daily
   rotate 7
   missingok
-  compress
-  delaycompress
+  #compress
+  #delaycompress
   prerotate
     /srv/http/ispcp/engine/traffic/ispcp-vrl-traff >/var/log/ispcp/ispcp-vrl-traff.log 2>&1
   endscript
